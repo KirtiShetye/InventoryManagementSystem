@@ -1,17 +1,23 @@
 package com.example.inventory.dto;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
-public class RegisterRequestDTO {
+public class LoginRequestDTO {
 
     @NotBlank
     @Email
     private String email;
 
     @NotBlank
-    @Size(min = 8)
     private String password;
+
+    protected LoginRequestDTO() {}
+
+    public LoginRequestDTO(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     public String getEmail() {
         return email;

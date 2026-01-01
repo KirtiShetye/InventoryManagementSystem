@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Cart {
 
-    Map<Integer, Integer> productCategoryIdVsCountMap;
+    private Map<Integer, Integer> productCategoryIdVsCountMap;
 
     public Cart(){
         productCategoryIdVsCountMap = new HashMap<>();
@@ -13,8 +13,8 @@ public class Cart {
 
     public void addItemInCart(int productCategoryId, int count){
 
-        if(productCategoryIdVsCountMap.containsKey(productCategoryId)){
-            int noOfItemsInCart = productCategoryIdVsCountMap.get(productCategoryId);
+        if(getItemCount(productCategoryId)>0){
+            int noOfItemsInCart = getItemCount(productCategoryId);
             productCategoryIdVsCountMap.put(productCategoryId, noOfItemsInCart + count);
         } else{
             productCategoryIdVsCountMap.put(productCategoryId, count);
@@ -22,20 +22,29 @@ public class Cart {
     }
 
     public void removeItemFromCart(int productCategoryId, int count) {
+        int currentCount = getItemCount(productCategoryId);
 
-        if (productCategoryIdVsCountMap.containsKey(productCategoryId))
-        {
-            int noOfItemsInCart = productCategoryIdVsCountMap.get(productCategoryId);
-            if (count-noOfItemsInCart==0) {
-                productCategoryIdVsCountMap.remove(productCategoryId);
-            }
-            else if(count-noOfItemsInCart>0){
-                productCategoryIdVsCountMap.put(productCategoryId, noOfItemsInCart - count);
-            }
-            else{
-                System.out.println("Items in cart are less than requested");
-            }
+        if (currentCount == 0) {
+            System.out.println("Product not found in cart");
+            return;
         }
+
+        if (count > currentCount) {
+            System.out.println("Items in cart are less than requested");
+            return;
+        }
+
+        setItemCount(productCategoryId, currentCount - count);
+    }
+
+    private void setItemCount(int productCategoryId, int count) {
+        if(count==0)
+            productCategoryIdVsCountMap.remove(productCategoryId);
+        productCategoryIdVsCountMap.put(productCategoryId,count);
+    }
+
+    private int getItemCount(int productCategoryId) {
+        return productCategoryIdVsCountMap.getOrDefault(productCategoryId,0);
     }
 
     public void emptyCart(){

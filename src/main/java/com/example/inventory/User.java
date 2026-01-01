@@ -20,7 +20,6 @@ public class User {
         return userId;
     }
 
-    //get UserCart
     public Cart getUserCart(){
         return userCartDetails;
     }
