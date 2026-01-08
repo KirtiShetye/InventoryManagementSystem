@@ -1,8 +1,12 @@
 package com.example.inventory.entity;
 
+import com.example.inventory.Address;
+import com.example.inventory.Cart;
 import com.example.inventory.enumeration.Role;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.spi.ToolProvider;
 
 @Entity
@@ -25,6 +29,15 @@ public class Users {
     @Column(nullable = false)
     private boolean active;
 
+    @Transient
+    private Address address;
+
+    @Transient
+    private Cart userCartDetails;
+
+    @Transient
+    List<String> orderIds;
+
     protected Users() {}
 
     public Users(String email, String password, Role role) {
@@ -32,6 +45,8 @@ public class Users {
         this.password = password;
         this.role = role;
         this.active = true;
+        userCartDetails = new Cart();
+        orderIds = new ArrayList<>();
     }
 
     public Long getId() {
@@ -52,5 +67,9 @@ public class Users {
 
     public Role getRole() {
         return role;
+    }
+
+    public Cart getUserCart(){
+        return userCartDetails;
     }
 }

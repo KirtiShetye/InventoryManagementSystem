@@ -2,13 +2,14 @@ package com.example.inventory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Cart {
 
     private Map<Integer, Integer> productCategoryIdVsCountMap;
 
     public Cart(){
-        productCategoryIdVsCountMap = new HashMap<>();
+        productCategoryIdVsCountMap = new ConcurrentHashMap<>();
     }
 
     public void addItemInCart(int productCategoryId, int count){

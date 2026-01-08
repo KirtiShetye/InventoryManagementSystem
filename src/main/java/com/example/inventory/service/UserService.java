@@ -1,22 +1,34 @@
 package com.example.inventory.service;
 
+import com.example.inventory.Address;
+import com.example.inventory.Cart;
+import com.example.inventory.User;
 import com.example.inventory.dto.RegisterRequestDTO;
 import com.example.inventory.entity.Users;
 import com.example.inventory.enumeration.Role;
+import com.example.inventory.model.CartStore;
 import com.example.inventory.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    //List<Users> userList;
+    private final CartStore cartStore;
 
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       CartStore cartStore) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cartStore = cartStore;
+        //userList=new ArrayList<>();
     }
 
     public void register(RegisterRequestDTO request) {
@@ -24,10 +36,53 @@ public class UserService {
             throw new IllegalStateException("User already exists");
         }
 
-        Users user = new Users(
+        Users users = new Users(
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()), Role.USER);
 
-        userRepository.save(user);
+        userRepository.save(users);
+
+        /*User user = createUser(request.getEmail());
+        userList.add(user);
+        return;*/
     }
+
+    /*private User createUser(String email){
+        User user = new User();
+        //user.setUserId(1);
+        user.setUserName(email);
+        Address address = new Address(230011, "city", "state");
+        user.setAddress(address);
+        return user;
+    }*/
+
+    public void addToCart(String email, int productCategoryId, int count) {
+
+        Users user = getUser(email);
+        Cart cart = cartStore.getCart(user.getId());
+        cart.addItemInCart(productCategoryId, count);
+    }
+
+    public void removeFromCart(String email, int productCategoryId, int count) {
+
+        Users user = getUser(email);
+        Cart cart = cartStore.getCart(user.getId());
+        cart.removeItemFromCart(productCategoryId, count);
+    }
+
+    public Users getUser(String email){
+       Users user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+       return user;
+    }
+
+
+    /*public void addUser(User user){
+        userList.add(user);
+    }
+
+    public void removeUser(User user){
+        userList.remove(user);
+    }*/
+
 }

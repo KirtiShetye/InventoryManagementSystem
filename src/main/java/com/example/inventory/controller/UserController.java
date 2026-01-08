@@ -1,13 +1,16 @@
 package com.example.inventory.controller;
+import com.example.inventory.Cart;
 import com.example.inventory.User;
+import com.example.inventory.dto.AddToCartRequest;
+import com.example.inventory.dto.CartResponseDTO;
 import com.example.inventory.dto.RegisterRequestDTO;
+import com.example.inventory.entity.Users;
+import com.example.inventory.model.CartStore;
 import com.example.inventory.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,10 +19,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final CartStore cartStore;
 
-    public UserController(UserService authService) {
+    public UserController(UserService authService, CartStore cartStore) {
         System.out.println("AuthController constructor called");
         this.userService = authService;
+        this.cartStore = cartStore;
     }
 
     @PostMapping("/register")
@@ -29,27 +34,53 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("User registered successfully");
     }
-    /*List<User> userList;
 
-    UserController(List userList){
-        this.userList = userList;
+    @PostMapping("/add")
+    public ResponseEntity<?> addToCart(
+            @RequestBody AddToCartRequest request,
+            Authentication authentication) {
+
+        String email = (String) authentication.getDetails();
+
+        userService.addToCart(
+                email,
+                request.getProductCategoryId(),
+                request.getCount()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Items added in cart successfully");
     }
 
-    public void addUser(User user){
-        userList.add(user);
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeFromCart(
+            @RequestBody AddToCartRequest request,
+            Authentication authentication) {
+
+        String email = (String) authentication.getDetails();
+
+        userService.addToCart(
+                email,
+                request.getProductCategoryId(),
+                request.getCount()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Items added in cart successfully");
     }
 
-    public void removeUser(User user){
-        userList.remove(user);
-    }
+    @GetMapping
+    public ResponseEntity<CartResponseDTO> getCartItems(
+            Authentication authentication) {
 
-    public User getUser(int userId){
-        for(User user : userList){
-            if(user.getUserId() == userId){
-                return user;
-            }
-        }
-        return null;
-    }*/
+        String email = (String) authentication.getDetails();
+        Users user = userService.getUser(email);
+        Cart cart = cartStore.getCart(user.getId());
+
+        CartResponseDTO response =
+                new CartResponseDTO(cart.getCartItems());
+
+        return ResponseEntity.ok(response);
+    }
 
 }

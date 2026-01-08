@@ -25,7 +25,7 @@ public class JwtUtil {
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(
-                        new Date(System.currentTimeMillis() + 3600000)
+                        new Date(System.currentTimeMillis() + 600000)
                 )
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -33,6 +33,14 @@ public class JwtUtil {
 
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
+    }
+
+    public Integer extractUserId(String token) {
+        return getClaims(token).get("userId", Integer.class);
+    }
+
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
     }
 
     public Claims getClaims(String token) {
