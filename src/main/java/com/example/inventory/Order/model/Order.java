@@ -6,6 +6,7 @@ import com.example.inventory.User.model.Address;
 import com.example.inventory.User.model.CardPayment;
 import com.example.inventory.Warehouse.model.Warehouse;
 import com.example.inventory.User.model.CartStore;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
@@ -15,16 +16,17 @@ public class Order {
     Address deliveryAddress;
     Map<Integer, Integer> productCategoryAndCountMap;
     Warehouse warehouse;
-    com.example.inventory.Order.model.Invoice invoice;
+    Invoice invoice;
     Payment payment;
     OrderStatus orderStatus;
-    CartStore cartStore;
 
-    public Order(Users user){
+    public Order(Users user, Map<Integer, Integer> productCategoryAndCountMap,
+                 Address deliveryAddress){
         this.user = user;
-        this.productCategoryAndCountMap = cartStore.getCart(user.getId()).getCartItems();
+        //this.cartStore = cartStore;
+        this.productCategoryAndCountMap = productCategoryAndCountMap;
         this.deliveryAddress = user.getAddress(); //from where I can get delivery address
-        invoice = new com.example.inventory.Order.model.Invoice();
+        this.invoice = new Invoice();
         this.orderId=OrderIdGenerator.generate();
     }
 
@@ -32,7 +34,6 @@ public class Order {
         boolean isPaymentSuccess = makePayment(new CardPayment());
         if(isPaymentSuccess) {
             this.orderStatus=OrderStatus.INPROGRESS;
-            user.getUserCart().emptyCart();
             //to add - remove item from inventory
         }else{
             this.orderStatus=OrderStatus.PAYMENTFAILED;

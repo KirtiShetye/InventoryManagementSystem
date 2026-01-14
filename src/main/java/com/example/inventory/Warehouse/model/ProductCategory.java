@@ -17,7 +17,7 @@ public class ProductCategory {
     //remove products
     public void removeProduct(int count){
         for(int i=1;i<=count;i++){
-            products.remove(0);
+            products.remove(0); //removing 0th element so that old stock gets cleared
         }
     }
 

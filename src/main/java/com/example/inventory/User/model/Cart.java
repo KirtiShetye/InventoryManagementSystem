@@ -1,6 +1,5 @@
 package com.example.inventory.User.model;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,7 +48,7 @@ public class Cart {
     }
 
     public void emptyCart(){
-        productCategoryIdVsCountMap = new HashMap<>();
+        productCategoryIdVsCountMap = null;
     }
 
     public  Map<Integer, Integer> getCartItems(){

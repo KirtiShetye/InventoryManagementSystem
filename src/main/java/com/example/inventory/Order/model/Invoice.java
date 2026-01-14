@@ -1,5 +1,9 @@
 package com.example.inventory.Order.model;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
 public class Invoice {
     int totalItemPrice;
     int totalTax;
